@@ -1,5 +1,6 @@
 package com.patika.creditapplication.service.strategy;
 
+import com.patika.creditapplication.enums.CreditStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +15,12 @@ public class LowIncome implements CreditStrategy {
     }
 
     @Override
-    public boolean isSuitableForCredit(Integer creditScore, Float monthlyIncome) {
-        return true;
+    public boolean isSuitableStrategy(Integer creditScore, Float monthlyIncome) {
+        return creditScore >= 500 && creditScore < 1000 && monthlyIncome < 5000;
+    }
+
+    @Override
+    public CreditStatus getCreditStatus() {
+        return CreditStatus.APPROVED;
     }
 }

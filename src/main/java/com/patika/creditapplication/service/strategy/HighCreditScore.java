@@ -1,7 +1,10 @@
 package com.patika.creditapplication.service.strategy;
 
 import com.patika.creditapplication.constant.CreditMultiplierConstant;
+import com.patika.creditapplication.enums.CreditStatus;
+import org.springframework.stereotype.Component;
 
+@Component
 public class HighCreditScore implements CreditStrategy {
     @Override
     public Float calculateCreditLimit(Float monthlyIncome, Float collateral) {
@@ -12,7 +15,12 @@ public class HighCreditScore implements CreditStrategy {
     }
 
     @Override
-    public boolean isSuitableForCredit(Integer creditScore, Float monthlyIncome) {
-        return true;
+    public boolean isSuitableStrategy(Integer creditScore, Float monthlyIncome) {
+        return creditScore >= 1000;
+    }
+
+    @Override
+    public CreditStatus getCreditStatus() {
+        return CreditStatus.APPROVED;
     }
 }
