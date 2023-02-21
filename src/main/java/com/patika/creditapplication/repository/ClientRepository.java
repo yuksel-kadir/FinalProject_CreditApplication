@@ -6,5 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
-    Client findClientByIdentityNumberAndDateOfBirth(String socialNumber, LocalDate dateOfBirth);
+    Client findClientByPhoneNumber(String phoneNumber);
+    Client findClientByIdentityNumber(String identityNumber);
+    Client findClientByIdentityNumberAndDateOfBirth(String identityNumber, LocalDate dateOfBirth);
+    Client findClientByIdentityNumberAndPhoneNumber(String identityNumber, String phoneNumber);
+    Client findClientByIdentityNumberOrPhoneNumber(String identity, String phoneNumber);
 }
