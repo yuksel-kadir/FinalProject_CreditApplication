@@ -12,9 +12,8 @@ public class ClientExistsException extends RuntimeException {
 
     private final int httpStatus;
 
-    public ClientExistsException(String message) {
-        super(message);
-        this.message = message;
+    public ClientExistsException() {
+        this.message = "The client already exists.";
         httpStatus = HttpStatus.FOUND.value();
     }
 }
