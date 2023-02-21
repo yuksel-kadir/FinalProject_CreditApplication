@@ -1,6 +1,11 @@
 package com.patika.creditapplication.enums;
 
 public enum CreditStatus {
-    APPROVED,
-    REJECTED
+    REJECTED(0),
+    APPROVED(1);
+    final int value;
+
+    CreditStatus(int value) {
+        this.value = value;
+    }
 }
