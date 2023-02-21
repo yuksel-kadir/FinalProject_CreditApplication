@@ -1,49 +1,88 @@
 package com.patika.creditapplication.service;
 
 import com.patika.creditapplication.dto.NewClient;
+import com.patika.creditapplication.entity.Application;
 import com.patika.creditapplication.entity.Client;
 import com.patika.creditapplication.exception.ClientExistsException;
+import com.patika.creditapplication.exception.ClientNotFoundException;
 import com.patika.creditapplication.repository.ClientRepository;
-import com.patika.creditapplication.response.ResponseData;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 @Service
 @AllArgsConstructor
 public class ClientService {
-    private final CreditScoreService creditScoreService;
     private final ClientRepository clientRepository;
 
-    public ResponseData RegisterClient(NewClient newClient) {
-        Client client = findClientByIdentificationNumberAndBirthDate(
+    @Transactional
+    public Client addClient(
+            NewClient newClient,
+            Integer clientCreditScore,
+            Application newApplication
+    ) {
+
+        Client client = findClientByIdentityNumberAndPhoneNumber(
                 newClient.getIdentityNumber(),
-                newClient.getDateOfBirth()
+                newClient.getPhoneNumber()
         );
 
         if (client == null) {
-            int score = creditScoreService.getCreditScore();
-            System.out.println("CLIENT CREDIT SCORE: " + score);
+            System.out.println("CLIENT CREDIT SCORE: " + clientCreditScore);
             Client client1 = Client.builder()
                     .firstName(newClient.getFirstName())
                     .lastName(newClient.getLastName())
                     .identityNumber(newClient.getIdentityNumber())
                     .phoneNumber(newClient.getPhoneNumber())
                     .dateOfBirth(newClient.getDateOfBirth())
-                    .creditScore(score)
+                    .creditScore(clientCreditScore)
                     .monthlyIncome(newClient.getMonthlyIncome())
-                    .collateral(newClient.getCollateral())
+                    .application(newApplication)
                     .build();
-            clientRepository.save(client1);
-            return new ResponseData(200, "User added.", newClient);
+
+            return clientRepository.save(client1);
         }
-        throw new ClientExistsException("Client registered already.");
+        throw new ClientExistsException();
     }
 
-    public Client findClientByIdentificationNumberAndBirthDate(String identityNumber, LocalDate dob) {
+    @Transactional
+    public void deleteClient(String identityNumber) {
+        Client client = clientRepository.findClientByIdentityNumber(identityNumber);
+        if (client == null)
+            throw new ClientNotFoundException();
+        System.out.println("Deleting: " + client);
+        clientRepository.delete(client);
+    }
+
+    public Client findClientByIdentityNumberAndBirthDate(String identityNumber, LocalDate dob) {
         return clientRepository.findClientByIdentityNumberAndDateOfBirth(
                 identityNumber, dob
         );
     }
+
+    public Client findClientByIdentityNumberAndPhoneNumber(
+            String identity,
+            String phoneNumber
+    ){
+        return clientRepository.findClientByIdentityNumberAndPhoneNumber(identity, phoneNumber);
+    }
+
+    public Client findClientByIdentityNumber(String identity){
+        return clientRepository.findClientByIdentityNumber(identity);
+    }
+
+    public Client findClientByPhoneNumber(String phoneNumber){
+        return clientRepository.findClientByPhoneNumber(phoneNumber);
+    }
+
+    public Client findClientByIdentityOrPhoneNumber(String identity, String phoneNumber){
+        return clientRepository.findClientByIdentityNumberOrPhoneNumber(identity, phoneNumber);
+    }
+    public boolean doesClientExist(String identity, String phoneNumber){
+        Client client = findClientByIdentityOrPhoneNumber(identity, phoneNumber);
+        return client != null;
+    }
+
 }
