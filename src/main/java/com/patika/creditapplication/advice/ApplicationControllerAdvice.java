@@ -2,6 +2,8 @@ package com.patika.creditapplication.advice;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.patika.creditapplication.exception.ClientExistsException;
+import com.patika.creditapplication.exception.ClientNotFoundException;
+import com.patika.creditapplication.exception.CreditStrategyNotFoundException;
 import com.patika.creditapplication.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,5 +59,22 @@ public class ApplicationControllerAdvice {
                 HttpStatus.FOUND
         );
     }
+
+    @ExceptionHandler(ClientNotFoundException.class)
+    public ResponseEntity<Response> handleClientNotFound(ClientNotFoundException ex) {
+        return new ResponseEntity<>(
+                new Response(ex.getHttpStatus(), ex.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(CreditStrategyNotFoundException.class)
+    public ResponseEntity<Response> handleCreditStrategyNotFound(CreditStrategyNotFoundException ex) {
+        return new ResponseEntity<>(
+                new Response(ex.getHttpStatus(), ex.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
 
 }
