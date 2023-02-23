@@ -39,6 +39,7 @@ public class ClientService {
                 .identityNumber(newClient.getIdentityNumber())
                 .phoneNumber(newClient.getPhoneNumber())
                 .dateOfBirth(newClient.getDateOfBirth())
+                .monthlyIncome(newClient.getMonthlyIncome())
                 .creditScore(creditScore)
                 .application(creditApplication)
                 .build();
