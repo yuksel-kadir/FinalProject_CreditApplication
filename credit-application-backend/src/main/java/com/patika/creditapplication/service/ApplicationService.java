@@ -6,6 +6,7 @@ import com.patika.creditapplication.dto.NewClient;
 import com.patika.creditapplication.entity.Application;
 import com.patika.creditapplication.entity.Client;
 import com.patika.creditapplication.enums.Carrier;
+import com.patika.creditapplication.exception.ClientExistsException;
 import com.patika.creditapplication.exception.ClientNotFoundException;
 import com.patika.creditapplication.repository.CreditApplicationRepository;
 import com.patika.creditapplication.service.strategy.StrategyContext;
@@ -33,15 +34,16 @@ public class ApplicationService {
     }
 
     public Application createApplicationForNewClient(NewClient newClient, Integer creditScore){
-        Application newApplication = strategyContext.getApplicationForNewClient(newClient, creditScore);
-        return newApplication;
+        return strategyContext.getApplicationForNewClient(newClient, creditScore);
     }
 
     //Process new credit application
     public CreditApplicationResult processCreditApplication(NewClient newClient) {
+        Client checkClient = clientService.findClientByIdentityOrPhoneNumber(newClient.getIdentityNumber(), newClient.getPhoneNumber());
+        if(checkClient != null)
+            throw new ClientExistsException();
         log.info("Processing credit application for: {}", newClient);
         Integer creditScore = creditScoreService.getCreditScore();
-        log.info("Client's credit score: {}", creditScore);
         Application newApplication = createApplicationForNewClient(newClient, creditScore);
         Application creditApplication = addCreditApplication(newApplication);
         log.info("Credit application: {} added to the database.", creditApplication);
@@ -49,7 +51,6 @@ public class ApplicationService {
         Client client = clientService.addClient(clientObj);//newClient, creditScore, creditApplication
         log.info("New client: {} added to the database.", client);
         CreditApplicationResult applicationResult = createCreditApplicationResult(client);
-        log.info("Application result is created: {}", applicationResult);
         String smsMessage = "Your credit application result -> Credit Limit: " + applicationResult.getCreditLimit() +
                 " Credit Status: " + applicationResult.getCreditStatus();
         smsSenderClient.sendSMS(Carrier.TURKCELL, smsMessage, client.getPhoneNumber());
