@@ -6,47 +6,43 @@ import com.patika.creditapplication.entity.Client;
 import com.patika.creditapplication.exception.ClientExistsException;
 import com.patika.creditapplication.exception.ClientNotFoundException;
 import com.patika.creditapplication.repository.ClientRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Slf4j
 public class ClientService {
     private final ClientRepository clientRepository;
 
+    //NewClient newClient, Integer clientCreditScore, Application newApplication
     @Transactional
-    public Client addClient(
-            NewClient newClient,
-            Integer clientCreditScore,
-            Application newApplication
-    ) {
-
-        Client client = findClientByIdentityNumberAndPhoneNumber(
+    public Client addClient(Client newClient) {
+        Client client = findClientByIdentityOrPhoneNumber(
                 newClient.getIdentityNumber(),
-                newClient.getPhoneNumber()
-        );
-
+                newClient.getPhoneNumber());
         if (client == null) {
-            System.out.println("CLIENT CREDIT SCORE: " + clientCreditScore);
-            Client client1 = Client.builder()
-                    .firstName(newClient.getFirstName())
-                    .lastName(newClient.getLastName())
-                    .identityNumber(newClient.getIdentityNumber())
-                    .phoneNumber(newClient.getPhoneNumber())
-                    .dateOfBirth(newClient.getDateOfBirth())
-                    .creditScore(clientCreditScore)
-                    .monthlyIncome(newClient.getMonthlyIncome())
-                    .application(newApplication)
-                    .build();
-
-            return clientRepository.save(client1);
+            log.info("Adding new client: {}", newClient);
+            return clientRepository.save(newClient);
         }
         throw new ClientExistsException();
     }
 
+    public Client getClientObject(NewClient newClient, Integer creditScore, Application creditApplication){
+        return Client.builder()
+                .firstName(newClient.getFirstName())
+                .lastName(newClient.getLastName())
+                .identityNumber(newClient.getIdentityNumber())
+                .phoneNumber(newClient.getPhoneNumber())
+                .dateOfBirth(newClient.getDateOfBirth())
+                .creditScore(creditScore)
+                .application(creditApplication)
+                .build();
+    }
     @Transactional
     public void deleteClient(String identityNumber) {
         Client client = clientRepository.findClientByIdentityNumber(identityNumber);
@@ -62,27 +58,13 @@ public class ClientService {
         );
     }
 
-    public Client findClientByIdentityNumberAndPhoneNumber(
-            String identity,
-            String phoneNumber
-    ){
-        return clientRepository.findClientByIdentityNumberAndPhoneNumber(identity, phoneNumber);
-    }
-
-    public Client findClientByIdentityNumber(String identity){
-        return clientRepository.findClientByIdentityNumber(identity);
-    }
-
-    public Client findClientByPhoneNumber(String phoneNumber){
-        return clientRepository.findClientByPhoneNumber(phoneNumber);
-    }
-
     public Client findClientByIdentityOrPhoneNumber(String identity, String phoneNumber){
         return clientRepository.findClientByIdentityNumberOrPhoneNumber(identity, phoneNumber);
     }
+    /*
     public boolean doesClientExist(String identity, String phoneNumber){
         Client client = findClientByIdentityOrPhoneNumber(identity, phoneNumber);
         return client != null;
     }
-
+    */
 }

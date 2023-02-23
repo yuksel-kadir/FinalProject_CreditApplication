@@ -2,6 +2,7 @@ package com.patika.creditapplication.dto;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class NewClient {
 
     @NotBlank (message = "The first name cannot be null or empty.")

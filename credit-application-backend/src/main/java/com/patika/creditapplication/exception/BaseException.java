@@ -13,7 +13,6 @@ public class BaseException extends RuntimeException {
     private final int httpStatus;
 
     public BaseException(String message) {
-        super(message);
         this.message = message;
         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR.value();
     }
