@@ -1,4 +1,4 @@
-package com.patika.creditapplication.adapter;
+package com.patika.creditapplication.smssystem;
 
 import com.patika.creditapplication.enums.Carrier;
 

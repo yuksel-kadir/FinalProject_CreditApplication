@@ -1,9 +1,8 @@
-package com.patika.creditapplication.adapter;
+package com.patika.creditapplication.smssystem.adapter;
 
 import com.patika.creditapplication.enums.Carrier;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Cache;
 import org.springframework.stereotype.Component;
 
 @Slf4j
