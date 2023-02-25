@@ -1,6 +1,6 @@
 package com.patika.creditapplication.dto;
 
-import com.patika.creditapplication.enums.CreditStatus;
+import com.patika.creditapplication.dto.response.CreditStatusBase;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CreditStrategyResult {
-    private CreditStatus creditStatus;
+    private CreditStatusBase creditStatus;
     private Float creditLimit;
+    private Float collateral;
+    private Integer creditScore;
 }
