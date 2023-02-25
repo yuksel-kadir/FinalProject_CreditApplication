@@ -1,4 +1,4 @@
-package com.patika.creditapplication.dto;
+package com.patika.creditapplication.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreditApplicationQuery {
+public class CreditApplicationQueryParameters {
     @NotBlank(message = "The identity number cannot be null or empty.")
     @Pattern(regexp = "^\\d+$", message = "The Identity number must contain only numbers")
     @Size(min = 11, max = 11, message = "The length of identity number must be 11 characters.")
