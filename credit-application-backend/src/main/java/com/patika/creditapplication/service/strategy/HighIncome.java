@@ -1,11 +1,16 @@
 package com.patika.creditapplication.service.strategy;
 
 import com.patika.creditapplication.constant.CreditMultiplierConstant;
-import com.patika.creditapplication.enums.CreditStatus;
+import com.patika.creditapplication.dto.response.ApprovedCreditApplication;
+import com.patika.creditapplication.dto.response.CreditStatusBase;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class HighIncome implements CreditStrategy{
+
+    private final ApprovedCreditApplication approvedCreditApplication;
 
     @Override
     public Float calculateCreditLimit(Float monthlyIncome, Float collateral) {
@@ -21,7 +26,7 @@ public class HighIncome implements CreditStrategy{
     }
 
     @Override
-    public CreditStatus getCreditStatus() {
-        return CreditStatus.APPROVED;
+    public CreditStatusBase getCreditStatus() {
+        return approvedCreditApplication;
     }
 }

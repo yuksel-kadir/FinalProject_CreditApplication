@@ -1,10 +1,14 @@
 package com.patika.creditapplication.service.strategy;
 
-import com.patika.creditapplication.enums.CreditStatus;
+import com.patika.creditapplication.dto.response.CreditStatusBase;
+import com.patika.creditapplication.dto.response.RejectedCreditApplication;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LowCreditScore implements CreditStrategy{
+@RequiredArgsConstructor
+public class LowCreditScore implements CreditStrategy {
+    private final RejectedCreditApplication rejectedCreditApplication;
 
     @Override
     public Float calculateCreditLimit(Float monthlyIncome, Float collateral) {
@@ -17,7 +21,7 @@ public class LowCreditScore implements CreditStrategy{
     }
 
     @Override
-    public CreditStatus getCreditStatus() {
-        return CreditStatus.REJECTED;
+    public CreditStatusBase getCreditStatus() {
+        return rejectedCreditApplication;
     }
 }
