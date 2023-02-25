@@ -43,6 +43,6 @@ public class Client {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "credit_application_id", referencedColumnName = "id")
-    private Application application;
+    private CreditApplication creditApplication;
 
 }
