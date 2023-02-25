@@ -1,4 +1,4 @@
-package com.patika.creditapplication.dto;
+package com.patika.creditapplication.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,7 +1,6 @@
 package com.patika.creditapplication.entity;
 
 
-import com.patika.creditapplication.enums.CreditStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Application {
+public class CreditApplication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +25,5 @@ public class Application {
     private Float collateral;
 
     @Column(name = "is_approved")
-    @Enumerated
-    private CreditStatus isApproved;
+    private Integer isApproved;
 }
