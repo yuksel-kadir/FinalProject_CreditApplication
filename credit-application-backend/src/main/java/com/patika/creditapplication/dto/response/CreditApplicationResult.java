@@ -1,12 +1,13 @@
-package com.patika.creditapplication.dto;
+package com.patika.creditapplication.dto.response;
 
-import com.patika.creditapplication.enums.CreditStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class CreditApplicationResult {
     private String firstName;
@@ -14,5 +15,5 @@ public class CreditApplicationResult {
     private String identityNumber;
     private Float creditLimit;
     private Integer creditScore;
-    private CreditStatus creditStatus;
+    private String creditStatus;
 }
