@@ -1,13 +1,13 @@
 package com.patika.creditapplication.service;
 
-import com.patika.creditapplication.adapter.SMSSenderClient;
-import com.patika.creditapplication.dto.CreditApplicationResult;
-import com.patika.creditapplication.dto.NewClient;
-import com.patika.creditapplication.entity.Application;
+import com.patika.creditapplication.dto.ClientInformation;
+import com.patika.creditapplication.dto.CreditStrategyResult;
+import com.patika.creditapplication.dto.request.NewClient;
+import com.patika.creditapplication.dto.response.CreditApplicationResult;
+import com.patika.creditapplication.dto.response.CreditApplicationUpdateResult;
 import com.patika.creditapplication.entity.Client;
-import com.patika.creditapplication.enums.Carrier;
-import com.patika.creditapplication.exception.ClientExistsException;
-import com.patika.creditapplication.exception.ClientNotFoundException;
+import com.patika.creditapplication.entity.CreditApplication;
+import com.patika.creditapplication.exception.CreditApplicationNotFoundException;
 import com.patika.creditapplication.repository.CreditApplicationRepository;
 import com.patika.creditapplication.service.strategy.StrategyContext;
 import lombok.RequiredArgsConstructor;
@@ -15,65 +15,87 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
+
+import static com.patika.creditapplication.util.CreditResultUtil.APPROVED;
+import static com.patika.creditapplication.util.CreditResultUtil.REJECTED;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ApplicationService {
     private final CreditApplicationRepository creditApplicationRepository;
-    private final CreditScoreService creditScoreService;
-    private final ClientService clientService;
     private final StrategyContext strategyContext;
-    private final SMSSenderClient smsSenderClient;
+
 
     @Transactional
-    public Application addCreditApplication(Application creditApplication) {
-        log.info("Adding new credit application: {}", creditApplication);
+    public CreditApplication addCreditApplication(CreditApplication creditApplication) {
+        log.info("Adding credit application: {}", creditApplication);
         return creditApplicationRepository.save(creditApplication);
     }
 
-    public Application createApplicationForNewClient(NewClient newClient, Integer creditScore){
-        return strategyContext.getApplicationForNewClient(newClient, creditScore);
+    public CreditStrategyResult getStrategyResult(NewClient newClient, Integer creditScore) {
+        return strategyContext.getCreditStrategyResult(newClient.getMonthlyIncome(), newClient.getCollateral(), creditScore);
     }
 
-    //Process new credit application
-    public CreditApplicationResult processCreditApplication(NewClient newClient) {
-        Client checkClient = clientService.findClientByIdentityOrPhoneNumber(newClient.getIdentityNumber(), newClient.getPhoneNumber());
-        if(checkClient != null)
-            throw new ClientExistsException();
-        log.info("Processing credit application for: {}", newClient);
-        Integer creditScore = creditScoreService.getCreditScore();
-        Application newApplication = createApplicationForNewClient(newClient, creditScore);
-        Application creditApplication = addCreditApplication(newApplication);
-        log.info("Credit application: {} added to the database.", creditApplication);
-        Client clientObj = clientService.getClientObject(newClient, creditScore, creditApplication);
-        Client client = clientService.addClient(clientObj);//newClient, creditScore, creditApplication
-        log.info("New client: {} added to the database.", client);
-        CreditApplicationResult applicationResult = createCreditApplicationResult(client);
-        String smsMessage = "Your credit application result -> Credit Limit: " + applicationResult.getCreditLimit() +
-                " Credit Status: " + applicationResult.getCreditStatus();
-        smsSenderClient.sendSMS(Carrier.TURKCELL, smsMessage, client.getPhoneNumber());
-        return applicationResult;
+    public CreditStrategyResult getStrategyResult(ClientInformation params) {
+        return strategyContext.getCreditStrategyResult(
+                params.getNewMonthlyIncome(),
+                params.getNewCollateral(),
+                params.getCreditScore()
+        );
     }
 
-    public CreditApplicationResult createCreditApplicationResult(Client client) {
-        Application application = client.getApplication();
+    public CreditApplicationResult getCreditApplicationResult(NewClient newClient, CreditStrategyResult creditStrategyResult) {
+        return CreditApplicationResult.builder()
+                .firstName(newClient.getFirstName())
+                .lastName(newClient.getLastName())
+                .identityNumber(newClient.getLastName())
+                .creditLimit(creditStrategyResult.getCreditLimit())
+                .creditScore(creditStrategyResult.getCreditScore())
+                .creditStatus(creditStrategyResult.getCreditStatus().getStatusText())
+                .build();
+    }
+
+    public CreditApplicationResult getCreditApplicationResult(Client client) {
+        CreditApplication creditApplication = client.getCreditApplication();
+        String creditStatus = creditApplication.getIsApproved() == 0 ? REJECTED : APPROVED;
         return CreditApplicationResult.builder()
                 .firstName(client.getFirstName())
                 .lastName(client.getLastName())
                 .identityNumber(client.getIdentityNumber())
                 .creditScore(client.getCreditScore())
-                .creditLimit(application.getCreditLimit())
-                .creditStatus(application.getIsApproved())
+                .creditLimit(creditApplication.getCreditLimit())
+                .creditStatus(creditStatus)
                 .build();
     }
 
-    public CreditApplicationResult findApplicationByIdentityNumberAndDateOfBirth(String identity, LocalDate dob) {
-        Client client = clientService.findClientByIdentityNumberAndBirthDate(identity, dob);
-        if (client == null)
-            throw new ClientNotFoundException();
-        return createCreditApplicationResult(client);
+    public CreditApplicationUpdateResult getCreditApplicationResult(CreditApplication application){
+        String creditStatus = application.getIsApproved() == 0 ? REJECTED : APPROVED;
+        return CreditApplicationUpdateResult.builder()
+                .creditStatus(creditStatus)
+                .creditLimit(application.getCreditLimit())
+                .build();
+    }
+    public CreditApplication getApplicationObjectForNewClient(CreditStrategyResult creditStrategyResult) {
+        return CreditApplication.builder()
+                .creditLimit(creditStrategyResult.getCreditLimit())
+                .collateral(creditStrategyResult.getCollateral())
+                .isApproved(creditStrategyResult.getCreditStatus().getStatusCode())
+                .build();
     }
 
+    public CreditApplicationUpdateResult updateCreditApplication(ClientInformation params) {
+        CreditApplication application = findApplicationById(params.getCreditApplicationId());
+        CreditStrategyResult result = getStrategyResult(params);
+        application.setCollateral(result.getCollateral());
+        application.setCreditLimit(result.getCreditLimit());
+        application.setIsApproved(result.getCreditStatus().getStatusCode());
+        CreditApplication updatedCreditApplication = addCreditApplication(application);
+        return getCreditApplicationResult(updatedCreditApplication);
+    }
+
+    public CreditApplication findApplicationById(Long id) {
+        return creditApplicationRepository.findById(id)
+                .orElseThrow(CreditApplicationNotFoundException::new);
+    }
 }
