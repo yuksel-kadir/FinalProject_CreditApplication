@@ -1,11 +1,10 @@
 package com.patika.creditapplication.advice;
 
 import com.patika.creditapplication.advice.strategy.ErrorParseStrategy;
-import com.patika.creditapplication.exception.ClientExistsException;
-import com.patika.creditapplication.exception.ClientNotFoundException;
-import com.patika.creditapplication.exception.CreditStrategyNotFoundException;
+import com.patika.creditapplication.exception.*;
 import com.patika.creditapplication.response.Response;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,14 +16,31 @@ import java.util.List;
 
 @ControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class ApplicationControllerAdvice {
     private final List<ErrorParseStrategy> parseStrategies;
 
-    private ErrorParseStrategy getStrategy(String className){
+    private ErrorParseStrategy getStrategy(String className) {
         return parseStrategies.stream()
                 .filter(errorParseStrategy -> errorParseStrategy.getErrorClass().equals(className))
                 .findFirst()
-                .get();
+                .orElseThrow(ErrorParseStrategyNotFoundException::new);
+    }
+
+    @ExceptionHandler(ErrorParseStrategyNotFoundException.class)
+    public ResponseEntity<Response> handleErrorParseStrategyNotFound(ErrorParseStrategyNotFoundException ex) {
+        return new ResponseEntity<>(
+                new Response(ex.getHttpStatus(), ex.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    @ExceptionHandler(CreditApplicationNotFoundException.class)
+    public ResponseEntity<Response> handleCreditApplicationNotFound(CreditApplicationNotFoundException ex) {
+        return new ResponseEntity<>(
+                new Response(ex.getHttpStatus(), ex.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -44,7 +60,7 @@ public class ApplicationControllerAdvice {
         ErrorParseStrategy strategy = getStrategy(exceptionClassName);
         String message = strategy.parseErrorMessage(ex.getMessage());
         return new ResponseEntity<>(
-                new Response(400, message),
+                new Response(400, "message"),
                 HttpStatus.BAD_REQUEST
         );
     }
