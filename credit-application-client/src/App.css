@@ -1,0 +1,66 @@
+body{
+  background-color: #202020 !important;
+}
+
+#root {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: start;
+  flex-flow: column;
+  align-items: flex-start;
+}
+.form-label{
+  color: whitesmoke;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: large;
+}
+
+.modal-header > .modal-title.h4 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 900;
+}
+
+.modal-body > h4{
+  font-family: 'Oswald', serif;
+  font-weight: 400;
+}
+
+#updateInformationModalId > h4{
+  font-family: 'Oswald', serif;
+  font-weight: 300;
+  color: black;
+}
+.nav-link{
+  font-family: 'Oswald', serif;
+  font-size: 1.25em !important;
+}
+
+.creditApplicationPage{
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+}
+
+.checkCreditApplicationPage{
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+}
+
+.updateInformationPage{
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+}
+
+.creditapplicationform{
+  width: 50%;
+}
