@@ -1,10 +1,6 @@
 package com.patika.creditapplication.controller;
 
-import com.patika.creditapplication.dto.request.ClientUpdateNameParam;
-import com.patika.creditapplication.dto.request.ClientUpdatePhoneNumberParam;
-import com.patika.creditapplication.dto.request.DeleteClient;
-import com.patika.creditapplication.dto.request.NewClient;
-import com.patika.creditapplication.dto.request.CreditApplicationQueryParameters;
+import com.patika.creditapplication.dto.request.*;
 import com.patika.creditapplication.dto.response.CreditApplicationResult;
 import com.patika.creditapplication.response.Response;
 import com.patika.creditapplication.response.ResponseData;
@@ -46,7 +42,7 @@ public class ClientController {
     }
 
     @PostMapping("/updateClientInformation/firstName")
-    public ResponseEntity<Response> updateClientFirstName(@Valid @RequestBody ClientUpdateNameParam clientParams){
+    public ResponseEntity<Response> updateClientFirstName(@Valid @RequestBody ClientUpdateNameParam clientParams) {
         String fullName = clientService.updateClientFirstName(clientParams);
         return new ResponseEntity<>(
                 new ResponseData(200, "Query processed successfully.", fullName),
@@ -55,7 +51,7 @@ public class ClientController {
     }
 
     @PostMapping("/updateClientInformation/lastName")
-    public ResponseEntity<Response> updateClientLastName(@Valid @RequestBody ClientUpdateNameParam clientParams){
+    public ResponseEntity<Response> updateClientLastName(@Valid @RequestBody ClientUpdateNameParam clientParams) {
         String fullName = clientService.updateClientLastName(clientParams);
         return new ResponseEntity<>(
                 new ResponseData(200, "Query processed successfully.", fullName),
@@ -64,7 +60,7 @@ public class ClientController {
     }
 
     @PostMapping("/updateClientInformation/phoneNumber")
-    public ResponseEntity<Response> updateClientPhoneNumber(@Valid @RequestBody ClientUpdatePhoneNumberParam clientParams){
+    public ResponseEntity<Response> updateClientPhoneNumber(@Valid @RequestBody ClientUpdatePhoneNumberParam clientParams) {
         String fullName = clientService.updateClientPhoneNumber(clientParams);
         return new ResponseEntity<>(
                 new ResponseData(200, "Query processed successfully.", fullName),
@@ -74,16 +70,18 @@ public class ClientController {
 
     //localhost:8080/client/delete
     @DeleteMapping("/deleteClient")
-    public Response deleteClient(
+    public ResponseEntity<Response> deleteClient(
             @RequestBody
             @Valid
             @NotBlank(message = "The identity number cannot be null or empty.")
             @Pattern(regexp = "^\\d+$", message = "The Identity number must contain only numbers")
             @Size(min = 11, max = 11, message = "The length of identity number must be 11 characters.") DeleteClient client
     ) {
-        clientService.deleteClient(client.getIdentity());
-        System.out.println("Deleted: " + client.getIdentity());
-        return new Response(200, "Client deleted.");
+        clientService.deleteClient(client.getIdentityNumber());
+        return new ResponseEntity<>(
+                new Response(200, "Client deleted."),
+                HttpStatus.OK
+        );
     }
 
 
