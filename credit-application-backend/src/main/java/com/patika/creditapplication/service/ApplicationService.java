@@ -49,7 +49,7 @@ public class ApplicationService {
         return CreditApplicationResult.builder()
                 .firstName(newClient.getFirstName())
                 .lastName(newClient.getLastName())
-                .identityNumber(newClient.getLastName())
+                .identityNumber(newClient.getIdentityNumber())
                 .creditLimit(creditStrategyResult.getCreditLimit())
                 .creditScore(creditStrategyResult.getCreditScore())
                 .creditStatus(creditStrategyResult.getCreditStatus().getStatusText())
@@ -95,7 +95,9 @@ public class ApplicationService {
     }
 
     public CreditApplication findApplicationById(Long id) {
-        return creditApplicationRepository.findById(id)
-                .orElseThrow(CreditApplicationNotFoundException::new);
+        CreditApplication application = creditApplicationRepository.findCreditApplicationById(id);
+        if(application == null)
+            throw new CreditApplicationNotFoundException();
+        return application;
     }
 }
