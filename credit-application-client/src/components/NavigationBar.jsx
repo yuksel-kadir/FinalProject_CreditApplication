@@ -8,23 +8,34 @@ export default function NavigationBar() {
   const [isHomeActive, setHomeActive] = useState(true);
   const [isUpdateActive, setUpdateActive] = useState(false);
   const [isCreditCheckActive, setCreditCheckActive] = useState(false);
+  const [isDeleteActive, setDeleteActive] = useState(false);
 
   const activateHome = () => {
     setHomeActive(true);
     setUpdateActive(false);
     setCreditCheckActive(false);
+    setDeleteActive(false);
   };
 
   const activateCreditCheck = () => {
     setHomeActive(false);
     setUpdateActive(false);
     setCreditCheckActive(true);
+    setDeleteActive(false);
   };
 
   const activateUpdate = () => {
     setHomeActive(false);
     setUpdateActive(true);
     setCreditCheckActive(false);
+    setDeleteActive(false);
+  };
+
+  const activateDelete = () => {
+    setHomeActive(false);
+    setUpdateActive(false);
+    setCreditCheckActive(false);
+    setDeleteActive(true);
   };
   return (
     <Navbar bg="light" variant="light" className="navigationbar" fixed="top">
@@ -62,6 +73,14 @@ export default function NavigationBar() {
             onClick={activateCreditCheck}
           >
             Check Credit Application
+          </Nav.Link>
+          <Nav.Link
+            as={Link}
+            to="/deleteClient"
+            active={isDeleteActive}
+            onClick={activateDelete}
+          >
+            Delete Client
           </Nav.Link>
         </Nav>
       </Container>
