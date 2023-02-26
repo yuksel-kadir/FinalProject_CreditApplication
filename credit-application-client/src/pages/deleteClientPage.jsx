@@ -21,7 +21,9 @@ export default function DeleteClientPage() {
     try {
       const response = await deleteClient(requestBody);
       console.log("delete client response");
-      console.log(response.data);
+      console.log(response.data.message);
+      setResponseMessage(response.data.message);
+      handleShow();
     } catch (error) {
         console.log("deleteClient error")
         console.log(error);
