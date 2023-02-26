@@ -1,5 +1,6 @@
 package com.patika.creditapplication.dto.request;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -7,6 +8,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
+@Builder
 public class ClientUpdatePhoneNumberParam {
     @NotBlank(message = "The identity number cannot be null or empty.")
     @Pattern(regexp = "^\\d+$", message = "The Identity number must contain only numbers")
