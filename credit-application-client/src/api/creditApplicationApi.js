@@ -36,3 +36,10 @@ export const updateCreditApplication = (body) => {
   return axios.post(
     "http://localhost:8080/creditApplication/updateCreditApplication", body);
 };
+
+export const deleteClient = (body) => {
+  console.log("deleteClient request body");
+  console.log(body);
+  return axios.delete(
+    "http://localhost:8080/client/deleteClient", {data: body});
+}
