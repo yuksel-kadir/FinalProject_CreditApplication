@@ -15,5 +15,5 @@ public class DeleteClient {
     @NotBlank(message = "The identity number cannot be null or empty.")
     @Pattern(regexp = "^\\d+$", message = "The Identity number must contain only numbers")
     @Size(min = 11, max = 11, message = "The length of identity number must be 11 characters.")
-    private String identity;
+    private String identityNumber;
 }
