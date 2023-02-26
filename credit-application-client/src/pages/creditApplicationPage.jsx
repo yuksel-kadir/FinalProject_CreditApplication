@@ -47,8 +47,8 @@ export default function Homepage() {
       handleShow();
     } catch (error) {
       console.log(error);
-      setShowAlert(true);
       setErrorResponse(error.response.data.message);
+      setShowAlert(true);
     }
   };
 
