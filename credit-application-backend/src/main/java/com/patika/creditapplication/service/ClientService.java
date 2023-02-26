@@ -75,8 +75,8 @@ public class ClientService {
         Client client = clientRepository.findClientByIdentityNumber(identityNumber);
         if (client == null)
             throw new ClientNotFoundException();
-        log.info("Deleting client: {}", client);
         clientRepository.delete(client);
+        log.info("Client Deleted : {}", client);
     }
 
     public Client findClientByIdentityNumberAndBirthDate(String identityNumber, LocalDate dob) {
@@ -103,7 +103,7 @@ public class ClientService {
             throw new ClientNotFoundException();
         client.setFirstName(params.getInput());
         Client changedClient = clientRepository.save(client);
-        log.info("Changed client name from {} to {}", params.getInput(), client.getFirstName());
+        log.info("Changed client name from {} to {}", client.getFirstName(), changedClient.getFirstName());
         return changedClient.getFirstName() + " " + changedClient.getLastName();
     }
 
