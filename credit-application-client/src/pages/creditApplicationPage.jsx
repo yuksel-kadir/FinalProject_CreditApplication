@@ -51,7 +51,10 @@ export default function Homepage() {
       setShowAlert(true);
     }
   };
-
+  const setDate = (date) => {
+    setDob(date);
+    setDobRequest(moment(date).format("YYYY-MM-DD"))
+  }
   return (
     <div className="creditApplicationPage">
       <Form
@@ -142,7 +145,7 @@ export default function Homepage() {
             <DatePicker
               selected={dob}
               dateFormat="yyyy/MM/dd"
-              onChange={(date) => setDob(date)}
+              onChange={(date) => setDate(date)}
             />
           </Form.Group>
         </Row>
