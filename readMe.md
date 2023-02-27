@@ -42,3 +42,6 @@ olarak önyüzünün yazılması.
 
 #### Müşteri Silme Ekranı Sonuç
 ![image](./images/m%C3%BC%C5%9Fteri%20silme%20onaylama.png)
+
+#### Swagger UI
+![image](./images/swagger%20ui.png)
